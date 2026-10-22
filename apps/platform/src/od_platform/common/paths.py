@@ -59,12 +59,27 @@ DOCS_DIR: Path = ROOT_DIR / "docs"
 SCRIPTS_DIR: Path = ROOT_DIR / "scripts"
 
 # ============================================================
-# 【新增】工具元数据目录 (audit trail / 工具自身日志)
+# 工具元数据目录
 # ============================================================
-# 业务工具(train/val/inference)的日志 -> LOGGING_DIR, 会被 reset 清理
-# 元工具(reset/doctor/upgrade)的日志 -> META_LOGGING_DIR, 是对清理动作本身的审计追踪
 META_DIR: Path = ROOT_DIR / ".odp-meta"
 META_LOGGING_DIR: Path = META_DIR / "logs"
+
+
+# ============================================================
+# 【新增】数据集相关路径 (D3 增量)
+# ============================================================
+# 数据集 yaml 的家 (Ultralytics 约定)
+DATASET_CONFIGS_DIR: Path = CONFIGS_DIR / "datasets"
+
+def raw_dataset_root(name: str) -> Path:
+    return RAW_DATA_DIR / name
+
+def dataset_processed_dir(name: str) -> Path:
+    return PROCESSED_DATA_DIR / name
+
+def dataset_yaml_path(name: str) -> Path:
+    return DATASET_CONFIGS_DIR / f"{name}.yaml"
+
 
 # ============================================================
 # 要初始化的目录列表
@@ -78,15 +93,16 @@ def get_dirs_to_initialize() -> List[Path]:
         CONFIGS_DIR, LOGGING_DIR, UNIT_TEST_DIR,
         # 工程基础设施
         SCRIPTS_DIR, DOCS_DIR,
-        # 【新增】元工具数据（reset 等元工具的审计日志位置）
+        # 元工具数据
         META_LOGGING_DIR,
+        # 【新增】数据集配置目录
+        DATASET_CONFIGS_DIR,
     ]
 
 # ============================================================
 # reset 专用清理清单
 # ============================================================
 def get_dirs_to_reset() -> List[Path]:
-    # 注意：META_LOGGING_DIR 绝对不在这里！不能自己清理自己！
     return [
         PROCESSED_DATA_DIR,
         RUNS_DIR,
@@ -95,7 +111,7 @@ def get_dirs_to_reset() -> List[Path]:
     ]
 
 # ============================================================
-# 【新增】绝对保护目录
+# 绝对保护目录
 # ============================================================
 PROTECTED_DIRS: Tuple[Path, ...] = (
     ROOT_DIR,
@@ -109,7 +125,6 @@ PROTECTED_DIRS: Tuple[Path, ...] = (
     CONFIGS_DIR,
     ROOT_DIR / ".git",
     ROOT_DIR / ".odp-workspace",
-    # 【新增】工具元数据根与日志目录，审计追踪不可被破坏
     META_DIR,
     META_LOGGING_DIR,
 )
@@ -130,6 +145,7 @@ def is_protected(path: Path) -> bool:
 if __name__ == "__main__":
     print(f"ROOT_DIR (workspace) = {ROOT_DIR}")
     print(f"META_DIR (tool data) = {META_DIR}")
+    print(f"DATASET_CONFIGS_DIR  = {DATASET_CONFIGS_DIR}")
     print(f"\n要初始化的目录共 {len(get_dirs_to_initialize())} 个:")
     for d in get_dirs_to_initialize():
         print(f"  - {d.relative_to(ROOT_DIR)}")
