@@ -34,4 +34,4 @@ New-Item -ItemType Directory -Force -Path "apps/platform/logging/training/2026-0
 1..50 | ForEach-Object { "training run $_" | Set-Content "apps/platform/logging/training/2026-05-10/run-$_.log" }
 Write-Host "  ✅ apps/platform/logging/ — 50 份日志"
 
-Write-Host "🎬 测试现场准备就绪。"
+Write-Host "🎬 测试现场准备就绪。".\scripts\make_disaster_data.ps1
