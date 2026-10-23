@@ -128,3 +128,25 @@ def demo_yaml_degenerate_and_extreme(tmp_path) -> Path:
         lbl.write_text(lbl.read_text(encoding="utf-8") + "0 0.50 0.50 0.0005 0.20\n",
                        encoding="utf-8")
     return _make_variant(tmp_path, "degenerate_and_extreme", mutate)
+# ============================================================
+# 补：D5 loaders 测试所需的夹具
+# ============================================================
+
+@pytest.fixture
+def write_yaml(tmp_path):
+    """生成临时 YAML 文件，返回 Path 对象。"""
+    def _write(content: str, name: str = "test.yaml") -> Path:
+        p = tmp_path / name
+        p.write_text(content, encoding="utf-8")
+        return p
+    return _write
+
+@pytest.fixture
+def minimal_train_yaml(tmp_path):
+    """生成一个最小可用的 train.yaml，供测试读取。"""
+    p = tmp_path / "minimal_train.yaml"
+    p.write_text(
+        "epochs: 200\nbatch: 32\nlr0: 0.005\nmodel: yolo11n.pt\n",
+        encoding="utf-8"
+    )
+    return p
